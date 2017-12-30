@@ -143,7 +143,7 @@ namespace PckTool
             return buffer;
         }
 
-        public unsafe byte[] Compress(byte[] dataBytes, int level)
+        public unsafe byte[] Compress(byte[] dataBytes, int level, out bool success)
         {
             var len = dataBytes.Length;
             byte* to;
@@ -240,9 +240,15 @@ namespace PckTool
             }
 
             // result
+            if (to - start > dataBytes.Length)
+            {
+                success = false;
+                return dataBytes;
+            }
             var compressed = new byte[to - start];
             Array.Copy(buffer, compressed, compressed.Length);
 
+            success = true;
             return compressed;
         }
     }

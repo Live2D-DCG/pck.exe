@@ -166,9 +166,17 @@ namespace PckTool
                             var ext = entry.Filename.Substring(entry.Filename.LastIndexOf('.')).ToLower();
                             if (ext == ".txt" || ext == ".json" || ext == ".cpp" || ext == ".mtn")
                             {
-                                entry.Data = Program.Yappy.Compress(File.ReadAllBytes(entry.Filename), 100);
+                                bool success;
+                                entry.Data = Program.Yappy.Compress(File.ReadAllBytes(entry.Filename), 100, out success);
                                 entry.Size = entry.Data.Length;
-                                entry.Flags = 1;
+                                if (success)
+                                {
+                                    entry.Flags = 1;
+                                }
+                                else
+                                {
+                                    entry.Flags = 0;
+                                }
                             }
                             else
                             {
