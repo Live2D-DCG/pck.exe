@@ -129,6 +129,7 @@ namespace PckTool
             {
                 var buffer = new byte[8];
                 int count;
+                var strict = checkStrict.Checked;
 
                 var files = Directory.GetFiles(resDir);
                 Array.Sort(files);
@@ -161,31 +162,63 @@ namespace PckTool
                                 Offset = offset,
                                 Filename = files[i]
                             };
-                            entry.OriginalSize = (int)new FileInfo(entry.Filename).Length;
+                            fsin.Read(entry.Dummy, 0, 8);
+                            entry.Flags = (byte)fsin.ReadByte();
 
-                            var ext = entry.Filename.Substring(entry.Filename.LastIndexOf('.')).ToLower();
-                            if (ext == ".txt" || ext == ".json" || ext == ".cpp" || ext == ".mtn")
+                            // check if it is the strict mode
+                            if (strict && !entry.Filename.EndsWith(".replace"))
                             {
-                                bool success;
-                                entry.Data = Program.Yappy.Compress(File.ReadAllBytes(entry.Filename), 100, out success);
-                                entry.Size = entry.Data.Length;
-                                if (success)
-                                {
-                                    entry.Flags = 1;
-                                }
-                                else
-                                {
-                                    entry.Flags = 0;
-                                }
+                                var os = fsin.ReadInt();
+                                entry.Size = fsin.ReadInt();
+                                entry.OriginalSize = fsin.ReadInt();
+                                entry.Less = fsin.ReadInt();
+                                var pos = fsin.Position;
+                                fsin.Seek(os, SeekOrigin.Begin);
+                                entry.Data = new byte[entry.Size];
+                                fsin.Read(entry.Data, 0, entry.Size);
+                                fsin.Seek(pos, SeekOrigin.Begin);
                             }
                             else
                             {
-                                entry.Size = entry.OriginalSize;
-                                entry.Flags = 0;
+                                entry.OriginalSize = (int)new FileInfo(entry.Filename).Length;
+                                // keep the original saving method
+                                if (entry.Flags != 0)
+                                {
+                                    var data = File.ReadAllBytes(entry.Filename);
+                                    if ((entry.Flags & 1) == 1)
+                                    {
+                                        // decompress
+                                        bool success;
+                                        data = Program.Yappy.Compress(data, 100, out success);
+                                        if (!success)
+                                        {
+                                            entry.Flags &= 0xfe;
+                                        }
+                                    }
+                                    entry.Size = data.Length;
+                                    if ((entry.Flags & 2) == 2)
+                                    {
+                                        // encrypt
+                                        data = Program.EncryptData(data);
+                                        entry.Less = data.Length - entry.Size;
+                                        entry.Size = data.Length;
+                                    }
+                                    entry.Data = data;
+                                }
+                                else
+                                {
+                                    entry.Size = entry.OriginalSize;
+                                }
+                                fsin.Seek(16, SeekOrigin.Current);
                             }
                             offset += entry.Size;
-                            fsin.Read(entry.Dummy, 0, 8);
-                            fsin.Seek(17, SeekOrigin.Current);
+
+                            if (i == filecount - 1 && entry.Size == 0)
+                            {
+                                entry.Offset = 0;
+                                entry.OriginalSize = 0;
+                                entry.Less = 0;
+                            }
 
                             entries[i] = entry;
                         }
@@ -199,25 +232,27 @@ namespace PckTool
                         fsout.WriteInt(entry.Offset);
                         fsout.WriteInt(entry.Size);
                         fsout.WriteInt(entry.OriginalSize);
-                        fsout.WriteInt(0);
+                        fsout.WriteInt(entry.Less);
                     }
 
                     // write content
-                    const int DATA_SIZE = 4096;
-                    var data = new byte[DATA_SIZE];
-                    foreach (var entry in entries)
                     {
-                        if (entry.Data != null)
+                        const int DATA_SIZE = 4096;
+                        var data = new byte[DATA_SIZE];
+                        foreach (var entry in entries)
                         {
-                            fsout.Write(entry.Data, 0, entry.Size);
-                        }
-                        else
-                        {
-                            using (var fsin = File.OpenRead(entry.Filename))
+                            if (entry.Data != null)
                             {
-                                while ((count = fsin.Read(data, 0, DATA_SIZE)) > 0)
+                                fsout.Write(entry.Data, 0, entry.Size);
+                            }
+                            else
+                            {
+                                using (var fsin = File.OpenRead(entry.Filename))
                                 {
-                                    fsout.Write(data, 0, count);
+                                    while ((count = fsin.Read(data, 0, DATA_SIZE)) > 0)
+                                    {
+                                        fsout.Write(data, 0, count);
+                                    }
                                 }
                             }
                         }

@@ -35,6 +35,7 @@
             this.listViewPck = new System.Windows.Forms.ListView();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.buttonPack = new System.Windows.Forms.Button();
+            this.checkStrict = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -102,11 +103,22 @@
             this.buttonPack.UseVisualStyleBackColor = true;
             this.buttonPack.Click += new System.EventHandler(this.buttonPack_Click);
             // 
+            // checkStrict
+            // 
+            this.checkStrict.AutoSize = true;
+            this.checkStrict.Location = new System.Drawing.Point(118, 40);
+            this.checkStrict.Name = "checkStrict";
+            this.checkStrict.Size = new System.Drawing.Size(132, 19);
+            this.checkStrict.TabIndex = 2;
+            this.checkStrict.Text = "Strict replace mode";
+            this.checkStrict.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(444, 165);
+            this.Controls.Add(this.checkStrict);
             this.Controls.Add(this.buttonPack);
             this.Controls.Add(this.listViewPck);
             this.Controls.Add(this.label2);
@@ -132,6 +144,7 @@
         private System.Windows.Forms.ListView listViewPck;
         private System.Windows.Forms.Button buttonPack;
         private System.Windows.Forms.ImageList imageList;
+        private System.Windows.Forms.CheckBox checkStrict;
     }
 }
 

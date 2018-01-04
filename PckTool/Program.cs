@@ -64,7 +64,7 @@ namespace PckTool
                 {
                     Directory.CreateDirectory(dir);
                 }
-                ExtractFiles(file, dir);
+                ExtractFiles(file, dir, args.Contains("/rename"));
                 MessageBox.Show("Extract successfully.", "Extract", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 //var info = new ProcessStartInfo();
@@ -95,8 +95,11 @@ namespace PckTool
         }
         #endregion
 
-        private static void ExtractFiles(string pckfile, string directory)
+        private static void ExtractFiles(string pckfile, string directory, bool autorename)
         {
+            string texture = null;
+            int textureIndex = 0;
+
             using (var fsin = File.OpenRead(pckfile))
             {
                 fsin.Seek(8, SeekOrigin.Begin);
@@ -137,7 +140,31 @@ namespace PckTool
                         // decompress
                         data = Yappy.Uncompress(data, entry.DataSize, entry.OriginalSize);
                     }
-                    outname += GetExtName(data);
+                    if (autorename)
+                    {
+                        var ext = GetExtName(data);
+                        if (ext == ".moc")
+                        {
+                            texture = Path.Combine(directory, outname + ".2048");
+                            if (!Directory.Exists(texture))
+                            {
+                                Directory.CreateDirectory(texture);
+                            }
+                        }
+                        if (ext == ".png" && texture != null)
+                        {
+                            outname = string.Format(@"{0}\texture_{1:00}.png", texture, textureIndex);
+                            textureIndex++;
+                        }
+                        else
+                        {
+                            outname += ext;
+                        }
+                    }
+                    else
+                    {
+                        outname += GetExtName(data);
+                    }
                     File.WriteAllBytes(Path.Combine(directory, outname), data);
                 }
             }
@@ -153,12 +180,12 @@ namespace PckTool
             }
         }
 
-        private static byte[] EncryptData(byte[] data)
+        internal static byte[] EncryptData(byte[] data)
         {
             using (var transform = AES.CreateEncryptor())
             {
                 var result = transform.TransformFinalBlock(data, 0, data.Length);
-                AES.Clear();
+                //AES.Clear();
                 return result;
             }
         }
