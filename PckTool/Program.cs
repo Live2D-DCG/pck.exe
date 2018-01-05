@@ -214,6 +214,10 @@ namespace PckTool
                 {
                     return ".moc";
                 }
+                else if (MatchID(data, "\x1bLua"))
+                {
+                    return ".luac";
+                }
                 else if (MatchID(data, "\x89PNG"))
                 {
                     return ".png";
