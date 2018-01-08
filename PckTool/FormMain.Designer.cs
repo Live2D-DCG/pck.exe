@@ -36,6 +36,8 @@
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.buttonPack = new System.Windows.Forms.Button();
             this.checkStrict = new System.Windows.Forms.CheckBox();
+            this.checkCompress = new System.Windows.Forms.CheckBox();
+            this.checkEncrypt = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -55,7 +57,7 @@
             this.comboBoxRes.FormattingEnabled = true;
             this.comboBoxRes.Location = new System.Drawing.Point(100, 12);
             this.comboBoxRes.Name = "comboBoxRes";
-            this.comboBoxRes.Size = new System.Drawing.Size(332, 23);
+            this.comboBoxRes.Size = new System.Drawing.Size(376, 23);
             this.comboBoxRes.TabIndex = 1;
             this.comboBoxRes.DragDrop += new System.Windows.Forms.DragEventHandler(this.comboBoxRes_DragDrop);
             this.comboBoxRes.DragEnter += new System.Windows.Forms.DragEventHandler(this.comboBoxRes_DragEnter);
@@ -78,7 +80,7 @@
             this.listViewPck.LargeImageList = this.imageList;
             this.listViewPck.Location = new System.Drawing.Point(12, 59);
             this.listViewPck.Name = "listViewPck";
-            this.listViewPck.Size = new System.Drawing.Size(311, 94);
+            this.listViewPck.Size = new System.Drawing.Size(240, 94);
             this.listViewPck.TabIndex = 3;
             this.listViewPck.UseCompatibleStateImageBehavior = false;
             this.listViewPck.View = System.Windows.Forms.View.Tile;
@@ -95,10 +97,10 @@
             // 
             this.buttonPack.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonPack.Location = new System.Drawing.Point(329, 59);
+            this.buttonPack.Location = new System.Drawing.Point(373, 59);
             this.buttonPack.Name = "buttonPack";
             this.buttonPack.Size = new System.Drawing.Size(103, 94);
-            this.buttonPack.TabIndex = 4;
+            this.buttonPack.TabIndex = 6;
             this.buttonPack.Text = "&Pack...";
             this.buttonPack.UseVisualStyleBackColor = true;
             this.buttonPack.Click += new System.EventHandler(this.buttonPack_Click);
@@ -113,11 +115,39 @@
             this.checkStrict.Text = "Strict replace mode";
             this.checkStrict.UseVisualStyleBackColor = true;
             // 
+            // checkCompress
+            // 
+            this.checkCompress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkCompress.AutoSize = true;
+            this.checkCompress.Checked = true;
+            this.checkCompress.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkCompress.Location = new System.Drawing.Point(258, 62);
+            this.checkCompress.Name = "checkCompress";
+            this.checkCompress.Size = new System.Drawing.Size(109, 19);
+            this.checkCompress.TabIndex = 4;
+            this.checkCompress.Text = "Keep Compress";
+            this.checkCompress.UseVisualStyleBackColor = true;
+            // 
+            // checkEncrypt
+            // 
+            this.checkEncrypt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkEncrypt.AutoSize = true;
+            this.checkEncrypt.Checked = true;
+            this.checkEncrypt.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkEncrypt.Location = new System.Drawing.Point(258, 84);
+            this.checkEncrypt.Name = "checkEncrypt";
+            this.checkEncrypt.Size = new System.Drawing.Size(96, 19);
+            this.checkEncrypt.TabIndex = 5;
+            this.checkEncrypt.Text = "Keep Encrypt";
+            this.checkEncrypt.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(444, 165);
+            this.ClientSize = new System.Drawing.Size(488, 165);
+            this.Controls.Add(this.checkEncrypt);
+            this.Controls.Add(this.checkCompress);
             this.Controls.Add(this.checkStrict);
             this.Controls.Add(this.buttonPack);
             this.Controls.Add(this.listViewPck);
@@ -126,7 +156,7 @@
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(300, 180);
+            this.MinimumSize = new System.Drawing.Size(364, 180);
             this.Name = "FormMain";
             this.Text = "Repack the PCK file...";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
@@ -145,6 +175,8 @@
         private System.Windows.Forms.Button buttonPack;
         private System.Windows.Forms.ImageList imageList;
         private System.Windows.Forms.CheckBox checkStrict;
+        private System.Windows.Forms.CheckBox checkCompress;
+        private System.Windows.Forms.CheckBox checkEncrypt;
     }
 }
 

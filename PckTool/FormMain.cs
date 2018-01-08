@@ -130,6 +130,8 @@ namespace PckTool
                 var buffer = new byte[8];
                 int count;
                 var strict = checkStrict.Checked;
+                var keepCompress = checkCompress.Checked;
+                var keepEncrypt = checkEncrypt.Checked;
 
                 var files = Directory.GetFiles(resDir);
                 Array.Sort(files);
@@ -185,9 +187,13 @@ namespace PckTool
                                 if (entry.Flags != 0)
                                 {
                                     var data = File.ReadAllBytes(entry.Filename);
-                                    if ((entry.Flags & 1) == 1)
+                                    if (!keepCompress)
                                     {
-                                        // decompress
+                                        entry.Flags &= 0xfe;
+                                    }
+                                    else if ((entry.Flags & 1) == 1)
+                                    {
+                                        // compress
                                         bool success;
                                         data = Program.Yappy.Compress(data, 100, out success);
                                         if (!success)
@@ -196,7 +202,12 @@ namespace PckTool
                                         }
                                     }
                                     entry.Size = data.Length;
-                                    if ((entry.Flags & 2) == 2)
+
+                                    if (!keepEncrypt)
+                                    {
+                                        entry.Flags &= 0xfd;
+                                    }
+                                    else if ((entry.Flags & 2) == 2)
                                     {
                                         // encrypt
                                         data = Program.EncryptData(data);

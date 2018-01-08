@@ -147,7 +147,7 @@ namespace PckTool
         {
             var len = dataBytes.Length;
             byte* to;
-            var buffer = GenerateBuffer(len, out to);
+            var buffer = GenerateBuffer(len * 2, out to);
             var start = to;
 
             byte* data;
